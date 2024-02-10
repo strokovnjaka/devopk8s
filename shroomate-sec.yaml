@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: shroomate
+  labels:
+    app: shroomate
+    component: shroomate
+type: Opaque
+data:
+  # topShitSecret
+  jwt_secret: dG9wU2hpdFNlY3JldA==
+  # shroomate
+  db_username: c2hyb29tYXRl
+  # thisPwdIsTopSecret
+  db_password: dGhpc1B3ZElzVG9wU2VjcmV0

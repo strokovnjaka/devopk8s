@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  labels:
+    app: shroomate
+    component: app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: shroomate
+      component: app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: shroomate
+        component: app
+    spec:
+      containers:
+        - image: ghcr.io/strokovnjaka/shroomate:0.0.1
+          name: app
+          env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: shroomate
+                  key: jwt_secret
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: shroomate
+                  key: db_username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: shroomate
+                  key: db_password
+            - name: MONGODB_ATLAS_URI
+              value: "mongodb://$(DB_USERNAME):$(DB_PASSWORD)@mongo/shroomate"
+            - name: NODE_ENV
+              value: production
+          ports:
+            - containerPort: 80
+              name: app

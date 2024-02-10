@@ -13,10 +13,10 @@ spec:
  - host: essa-vm-07.lrk.si
    http:
      paths:
-     - backend:
+     - path: /
+       pathType: Prefix
+       backend:
          service:
            name: shroomate
            port:
              number: 80
-       path: /
-       pathType: Prefix
