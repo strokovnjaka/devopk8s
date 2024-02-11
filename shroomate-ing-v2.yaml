@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+ name: shroomate
+ annotations:
+   cert-manager.io/cluster-issuer: letsencrypt
+spec:
+ tls:
+ - hosts:
+   - essa-vm-07.lrk.si
+   secretName: shroomate-ingress-tls
+ rules:
+ - host: essa-vm-07.lrk.si
+   http:
+     paths:
+     - path: /
+       pathType: Prefix
+       backend:
+         service:
+           name: app-v2
+           port:
+             number: 80

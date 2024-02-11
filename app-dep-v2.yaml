@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app
+  name: app-v2
   labels:
     app: shroomate
-    component: app
+    component: app-v2
 spec:
   replicas: 3
   selector:
     matchLabels:
       app: shroomate
-      component: app
+      component: app-v2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -20,11 +20,11 @@ spec:
     metadata:
       labels:
         app: shroomate
-        component: app
+        component: app-v2
     spec:
       containers:
-        - image: ghcr.io/strokovnjaka/shroomate:0.1.0
-          name: app
+        - image: ghcr.io/strokovnjaka/shroomate:0.2.0
+          name: app-v2
           imagePullPolicy: Always
           env:
             - name: JWT_SECRET
