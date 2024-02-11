@@ -22,6 +22,7 @@ spec:
       containers:
         - image: ghcr.io/strokovnjaka/shroomate:0.0.7
           name: app
+          imagePullPolicy: Always
           env:
             - name: JWT_SECRET
               valueFrom:
@@ -48,3 +49,19 @@ spec:
           ports:
             - containerPort: 3000
               name: app
+          readinessProbe:
+            httpGet:
+              path: /api/species
+              port: app
+            failureThreshold: 2
+            periodSeconds: 22
+          livenessProbe:
+            tcpSocket:
+              port: app
+            failureThreshold: 2
+            periodSeconds: 11
+          startupProbe:
+            tcpSocket:
+              port: app
+            failureThreshold: 30
+            periodSeconds: 11

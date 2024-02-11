@@ -18,9 +18,28 @@ spec:
         app: shroomate
         component: mongo
     spec:
+      restartPolicy: Always
       containers:
       - image: mongo:7.0
         name: mongo
+        livenessProbe:
+          tcpSocket:
+            port: mongo
+          failureThreshold: 2
+          periodSeconds: 11
+        startupProbe:
+          tcpSocket:
+            port: mongo
+          failureThreshold: 30
+          periodSeconds: 11
+        readinessProbe:
+          exec:
+            command:
+              - mongosh
+              - --eval
+              - "db.adminCommand('ping')"
+          timeoutSeconds: 5
+          failureThreshold: 2
 #        env:
 #        - name: MONGODB_INITDB_ROOT_USERNAME
 #          valueFrom:
