@@ -21,28 +21,24 @@ spec:
       containers:
       - image: mongo:7.0
         name: mongo
-        env:
-        - name: MONGODB_INITDB_ROOT_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: shroomate
-              key: db_username
-        - name: MONGODB_INITDB_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: shroomate
-              key: db_password
+#        env:
+#        - name: MONGODB_INITDB_ROOT_USERNAME
+#          valueFrom:
+#            secretKeyRef:
+#              name: shroomate
+#              key: db_username
+#        - name: MONGODB_INITDB_ROOT_PASSWORD
+#          valueFrom:
+#            secretKeyRef:
+#              name: shroomate
+#              key: db_password
         ports:
         - containerPort: 27017
           name: mongo
         volumeMounts:
-        - name: mongo-data
+        - name: mongo-datadb
           mountPath: /data/db
-  volumeClaimTemplates:
-  - metadata:
-      name: mongo-data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 1Gi
+      volumes:
+      - name: mongo-datadb
+        persistentVolumeClaim:
+          claimName: mongo

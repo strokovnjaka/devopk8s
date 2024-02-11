@@ -20,7 +20,7 @@ spec:
         component: app
     spec:
       containers:
-        - image: ghcr.io/strokovnjaka/shroomate:0.0.1
+        - image: ghcr.io/strokovnjaka/shroomate:0.0.7
           name: app
           env:
             - name: JWT_SECRET
@@ -39,9 +39,12 @@ spec:
                   name: shroomate
                   key: db_password
             - name: MONGODB_ATLAS_URI
-              value: "mongodb://$(DB_USERNAME):$(DB_PASSWORD)@mongo/shroomate"
+              #value: "mongodb://$(DB_USERNAME):$(DB_PASSWORD)@mongo/shroomate"
+              value: "mongodb://mongo/shroomate"
             - name: NODE_ENV
               value: production
+            - name: BASE_URL
+              value: "https://essa-vm-07.lrk.si"
           ports:
-            - containerPort: 80
+            - containerPort: 3000
               name: app

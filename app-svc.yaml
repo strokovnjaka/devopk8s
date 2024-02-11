@@ -7,8 +7,10 @@ metadata:
     component: app
 spec:
   ports:
-    - port: 3000
+    - port: 80
+      protocol: TCP
+      targetPort: 3000
   selector:
     app: shroomate
     component: app
-  clusterIP: None
+  type: ClusterIP
