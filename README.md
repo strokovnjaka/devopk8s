@@ -77,20 +77,31 @@ shroomate   public   essa-vm-07.lrk.si   127.0.0.1   80, 443   14m
 # Rolling updates
 
 - make a new release (e.g. current v0.0.7, new v0.1.0) (commit, push, and tag in git)
-- github actions build a new docker image v0.1.0
-- change release in `app-dep.yaml`:
+
+- check we are serving the old v0.0.7 version
+
+
+
+- github actions automagically build a new docker image v0.1.0 by themselves
+
+- change container image release in `app-dep.yaml`
+
 ```
 ...
     containers:
       image: ghcr.io/strokovnjaka/shroomate:0.1.0
 ...
 ```
+
 - apply deployment
+
 ```
 jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ k apply -f app-dep.yaml
 deployment.apps/app configured
 ```
-- observe pods being created and terminated according to strategy (`maxSurge 1, maxUnavailabe: 0`):
+
+- observe pods being created and terminated according to strategy (`maxSurge 1, maxUnavailabe: 0`)
+
 ```
 jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ k get pod --watch
 NAME                   READY   STATUS    RESTARTS   AGE
@@ -143,17 +154,24 @@ pod/app-8448456fdf-zkz9g   1/1     Running   0          9m12s
 pod/app-8448456fdf-lwxsk   1/1     Running   0          9m
 ```
 
+- check we are serving the newly deployed version
+
+
 # Blue-green deployment
 
 - make a copy of app deployment and service, change names, labels, and, of course, container image, e.g.
+
 ```
 jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ cp app-dep.yaml app-dep-v2.yaml
 jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ cp app-svc.yaml app-svc-v2.yaml 
-jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ vi app-svc-v2.yaml 
+jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ vi app-svc-v2.yaml
+...
 jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ vi app-dep-v2.yaml 
+...
 ```
 
-- create new deployment and service:
+- create new deployment and service
+
 ```
 jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ k get all
 NAME                          READY   STATUS    RESTARTS   AGE
@@ -185,6 +203,7 @@ statefulset.apps/mongo   1/1     51m
 ```
 
 - test new service works
+
 ```
 jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ curl 10.152.183.131
 <!doctype html>
@@ -192,8 +211,13 @@ jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ curl 10.152.183.131
 ...
 ```
 
-- switch to the new service by flipping ingress to `app-svc-v2`:
+- switch to the new service by flipping ingress to `app-svc-v2`
+
 ```
+jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ cp shroomate-ing.yaml shroomate-ing-v2.yaml 
+jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ vi shroomate-ing-v2.yaml
+...
+
  - host: essa-vm-07.lrk.si
    http:
      paths:
@@ -204,4 +228,10 @@ jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ curl 10.152.183.131
            name: app-v2  # <--- here
            port:
              number: 80
+... 
+jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ k apply -f shroomate-ing.yaml 
+ingress.networking.k8s.io/shroomate configured
 ```
+
+- check we are serving the newly deployed version
+
