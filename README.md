@@ -1,8 +1,10 @@
-# Notes
+# Excercises in style: the power of shrooms in κυβερνήτης
 
-- 
+## Prerequisites
 
-# Install
+Follow the [all-convering recipes](https://essa-23.training.garaza.io/kubernetes/prepare-environment/).
+
+## Setup
 
 - create shroom secrets
 
@@ -73,16 +75,19 @@ NAME        CLASS    HOSTS               ADDRESS     PORTS     AGE
 shroomate   public   essa-vm-07.lrk.si   127.0.0.1   80, 443   14m
 ```
 
-
-# Rolling updates
+## Rolling updates
 
 - make a new release (e.g. current v0.0.7, new v0.1.0) (commit, push, and tag in git)
 
-- check we are serving the old v0.0.7 version
+- check we are serving the old v0.0.7 version (nav. title saying just "ShrooMate")
 
-
+<img src="images/v0.0.7.png" alt="v0.0.7" width="300"/>
 
 - github actions automagically build a new docker image v0.1.0 by themselves
+  
+<img src="images/ghactioninprogress.png" alt="in progress" height="200"/>
+
+<img src="images/ghactiondone.png" alt="in progress" height="200"/>
 
 - change container image release in `app-dep.yaml`
 
@@ -154,10 +159,12 @@ pod/app-8448456fdf-zkz9g   1/1     Running   0          9m12s
 pod/app-8448456fdf-lwxsk   1/1     Running   0          9m
 ```
 
-- check we are serving the newly deployed version
+- check we are serving the newly deployed version (nav. title saying "ShrooMate Newest")
+
+<img src="images/v0.1.0.png" alt="v0.1.0" width="300"/>
 
 
-# Blue-green deployment
+## Blue-green deployment
 
 - make a copy of app deployment and service, change names, labels, and, of course, container image, e.g.
 
@@ -233,5 +240,20 @@ jkrivic@essa-vm-07 (⎈|microk8s:default):~/devopk8s$ k apply -f shroomate-ing.y
 ingress.networking.k8s.io/shroomate configured
 ```
 
-- check we are serving the newly deployed version
+- check we are serving the newly deployed version (nav. title saying "ShrooMate Coolest")
+
+<img src="images/v0.2.0.png" alt="v0.2.0" width="300"/>
+
+
+## Notes
+
+### Probes
+
+Mongo stateful set has
+- startup probe, which checks that TCP socket can be opened to mongo's port
+- liveness probe, which does the same
+- readiness probe, which checks if mongodb server can be pinged via `mongosh`
+  
+Shroomate app deployment startup and liveness probes are almost the same (using the app's port), while
+readiness probe checks if a page that accesses the db also works.
 
